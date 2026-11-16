@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // This collection holds four FIXED fictional identities ONLY.
+    // Public demo: anyone can change their attendance. Never use for real personnel.
+    match /publicDemoDays/{day}/attendance/{id} {
+      allow read: if day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') && id in ['demo-1','demo-2','demo-3','demo-4'];
+      allow create, update: if validDemo(day,id) && request.resource.data.keys().hasOnly(['name','rank','flight','status','source','updatedAt']) && request.resource.data.keys().hasAll(['name','rank','flight','status','source','updatedAt']) && request.resource.data.updatedAt == request.time;
+      allow delete: if false;
+    }
+    function validDemo(day,id) {
+      return day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && id in ['demo-1','demo-2','demo-3','demo-4']
+        && request.resource.data.name == (id == 'demo-1' ? 'Demo Cadet One' : id == 'demo-2' ? 'Demo Cadet Two' : id == 'demo-3' ? 'Demo Cadet Three' : 'Demo Senior Cadet')
+        && request.resource.data.rank == (id == 'demo-1' ? 'CDT' : id == 'demo-2' ? 'LCDT' : id == 'demo-3' ? 'CCPL' : 'CSGT')
+        && request.resource.data.flight == (id == 'demo-1' ? '1 Flight' : id == 'demo-2' ? '2 Flight' : id == 'demo-3' ? '3 Flight' : 'Senior Cadets')
+        && request.resource.data.status in ['Unmarked','Present','Late','Away - leave request received','Away - no leave request']
+        && request.resource.data.source in ['Cadet demo','Staff demo'];
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
