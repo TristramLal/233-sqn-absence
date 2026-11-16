@@ -1,12 +1,12 @@
-# 233 Squadron Wednesday Roll — open-interface demonstration
+# 233 Squadron live Firebase demo (fictional records only)
 
-Cadet demo: /roll/
-Staff demo: /roll/staff/
+The cadet and staff pages now use Firebase Web SDK / Cloud Firestore. The four fixed fictional demonstration identities are the only allowed records. The actual 87-person nominal roll remains private and must not be published here.
 
-No login or access code is required for these demonstration pages. The sample roll contains **fictional people only**. Data is stored in the browser's localStorage, not Firebase, so changes do not sync across devices. Open both pages in the same browser profile to see changes.
+Setup:
+1. Copy the Firebase Web API Key from Firebase Console > Project settings > General > Your apps > 233 Squadron Roll into the apiKey field in roll/config.js. This is a public client identifier, not a secret. Do NOT use service account credentials.
+2. In Firebase Console > Firestore Database > Rules, paste the contents of roll/firestore-demo.rules and publish. These rules deny access to all other collections and allow public reads/updates only for four fixed fictional demo identities. Review existing rules before replacing them, because replacement affects other apps using this database.
+3. Test on two devices: /roll/ sign-in and /roll/staff/ dashboard. Statuses update in real time.
 
-Firebase project: sqn-attendance. Firestore was created by the project owner, but this demo deliberately does not connect to Firestore or deploy permissive database rules. Do not put the private 87-person nominal roll into the public repository or a publicly readable Firestore collection.
+IMPORTANT: The dashboard has no login and any visitor can change the four demo records. The rules are intentionally unsuitable for actual cadet data. For a live operational roll, approved server-side access control and privacy review are required. Never upload the private roster or real attendance data into publicDemoDays.
 
-To deploy a real cross-device attendance system, obtain approval for handling cadet personal information and implement server-side access controls and safe public submission handling. A separate staff URL alone does not provide authorisation. GitHub Pages cannot keep server secrets.
-
-The old roll/schema.sql is a legacy Supabase file and is not used by these pages. The separate Netlify absence notification website is unchanged.
+The separate Netlify absence website is unchanged. roll/schema.sql is legacy Supabase material and is not used.
