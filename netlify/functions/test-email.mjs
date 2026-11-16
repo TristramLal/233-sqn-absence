@@ -3,7 +3,7 @@
 const json = (status, data) => new Response(JSON.stringify(data), {status,headers:{"content-type":"application/json","cache-control":"no-store"}});
 export default async (request) => {
   if (request.method !== "POST") return json(405,{error:"POST required"});
-  const {RESEND_API_KEY,TEST_EMAIL_TOKEN,TEST_TO_EMAIL,TEST_FROM_EMAIL,EMAIL_TEST_ENABLED} = Netlify.env.toObject();
+  const {RESEND_API_KEY,TEST_EMAIL_TOKEN,TEST_TO_EMAIL,TEST_FROM_EMAIL,EMAIL_TEST_ENABLED} = process.env;
   if (EMAIL_TEST_ENABLED !== "true") return json(503,{error:"Email test is disabled"});
   if (!TEST_EMAIL_TOKEN || request.headers.get("x-test-token") !== TEST_EMAIL_TOKEN) return json(401,{error:"Unauthorised"});
   if (!RESEND_API_KEY || !TEST_TO_EMAIL || !TEST_FROM_EMAIL) return json(503,{error:"Missing email configuration"});
